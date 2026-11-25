@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dealradar-hu"
+version = "0.1.0"
+description = "Local-first deal discovery for the Hungarian market"
+requires-python = ">=3.12"
+dependencies = [
+    "sqlalchemy>=2.0",
+    "alembic>=1.13",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "streamlit>=1.40",
+    "tzdata>=2024.1",  # Europe/Budapest on Windows (ADR-056)
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11"]
+
+[project.scripts]
+dealradar = "dealradar.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["dealradar*"]
+
+[tool.setuptools.package-data]
+"dealradar.migrations" = ["script.py.mako"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["dealradar/migrations/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["dealradar"]
+exclude = ["dealradar/migrations/versions/"]
+
+[[tool.mypy.overrides]]
+module = ["dealradar.migrations.*"]
+disallow_untyped_defs = false
